@@ -1,0 +1,15 @@
+<template>
+    <lightning-card title="Voicemail Recording" icon-name="utility:volume_high">
+        <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+            <template lwc:if={hasAudio}>
+                <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_x-small">{fileName}</p>
+                <audio controls preload="none" src={audioUrl} style="width: 100%;">
+                    Your browser does not support the audio element.
+                </audio>
+            </template>
+            <template lwc:elseif={loaded}>
+                <p class="slds-text-color_weak">No voicemail recording attached to this Case.</p>
+            </template>
+        </div>
+    </lightning-card>
+</template>

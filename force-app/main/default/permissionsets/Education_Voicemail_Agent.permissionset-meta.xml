@@ -2,6 +2,10 @@
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
     <label>Education Voicemail Agent</label>
     <hasActivationRequired>false</hasActivationRequired>
+    <classAccesses>
+        <apexClass>VoicemailAudioController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
     <fieldPermissions>
         <editable>true</editable>
         <field>Case.Callback_Number__c</field>
@@ -12,4 +16,13 @@
         <field>Case.Caller_Name__c</field>
         <readable>true</readable>
     </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Case.External_Id__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <recordTypeVisibilities>
+        <recordType>Case.Voicemail</recordType>
+        <visible>true</visible>
+    </recordTypeVisibilities>
 </PermissionSet>
