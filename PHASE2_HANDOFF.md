@@ -54,11 +54,11 @@ Org: `scde--casemgmt.sandbox.my.salesforce.com` · API version: **62.0**
 | `External_Id__c` API name | `External_Id__c` | ✅ Confirmed |
 | Education Voicemail Queue ID | `00GWA000007oHmP2AU` | ✅ Confirmed |
 | Voicemail Record Type Id | `012WA000001OMMzYAO` | ✅ Confirmed |
-| NEW_MAILBOX@ed.sc.gov IMAP access | — | ☐ Confirmed by M365 admin |
-| Salesforce Connected App (OAuth) | Client ID + secret | ☐ Provided by SF admin |
-| Anypoint Platform access for Gavin | — | ☐ Confirmed by MuleSoft admin |
-| Python API hosting environment | Azure | ☐ Confirmed by Azure admin |
-| Shared API key (MuleSoft → Python) | — | ☐ Agreed by dev team |
+| Mailbox IMAP access (`estfvoicemail@ed.sc.gov`) | Office 365 / IMAP Email Listener | ☐ Service account / app password from M365 admin |
+| Salesforce Connected App (OAuth) | Consumer Key + Secret **obtained** — stored securely outside the repo (Azure app settings / local `.env`). NOT committed. Verify Client Credentials Flow + Run-As user (with `Education_Voicemail_Agent`). | ✅ In hand (secure) |
+| Anypoint Platform access for Gavin | Confirmed | ✅ Gavin has deploy access |
+| Python API hosting environment | Azure | ⏳ Deferred — set up at Phase 2 start |
+| Shared API key (MuleSoft → Python) | — | ⏳ Deferred — generated when Python work begins (set as `API_KEY` + `python.api.key`) |
 
 ---
 
