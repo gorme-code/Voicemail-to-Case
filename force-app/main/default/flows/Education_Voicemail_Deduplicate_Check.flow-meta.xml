@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <description>After-insert record-triggered flow on Case. When a Phone-origin voicemail Case is created with a callback number, checks for other open Cases sharing the same callback number and adds a Case Comment flagging the possible duplicate. Does not close or merge either Case.</description>
+    <environments>Default</environments>
+    <interviewLabel>Education Voicemail Deduplicate Check {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Education_Voicemail_Deduplicate_Check</label>
+    <processType>AutoLaunchedFlow</processType>
+    <status>Active</status>
+    <start>
+        <locationX>176</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_Matching_Cases</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Origin</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Phone</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Callback_Number__c</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <object>Case</object>
+        <recordTriggerType>Create</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <recordLookups>
+        <name>Get_Matching_Cases</name>
+        <label>Get Matching Cases</label>
+        <locationX>176</locationX>
+        <locationY>132</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_For_Duplicates</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Callback_Number__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Callback_Number__c</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Status</field>
+            <operator>NotEqualTo</operator>
+            <value>
+                <stringValue>Closed</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Id</field>
+            <operator>NotEqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Case</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <decisions>
+        <name>Check_For_Duplicates</name>
+        <label>Check For Duplicates</label>
+        <locationX>176</locationX>
+        <locationY>264</locationY>
+        <defaultConnectorLabel>No Duplicate Found</defaultConnectorLabel>
+        <rules>
+            <name>Duplicate_Found</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Matching_Cases.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Create_Duplicate_Comment</targetReference>
+            </connector>
+            <label>Duplicate Found</label>
+        </rules>
+    </decisions>
+    <recordCreates>
+        <name>Create_Duplicate_Comment</name>
+        <label>Create Duplicate Comment</label>
+        <locationX>50</locationX>
+        <locationY>396</locationY>
+        <inputAssignments>
+            <field>CommentBody</field>
+            <value>
+                <elementReference>DuplicateCommentBody</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ParentId</field>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <object>CaseComment</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+    <formulas>
+        <name>DuplicateCommentBody</name>
+        <dataType>String</dataType>
+        <expression>"Possible duplicate — an open case already exists for this callback number. See Case " &amp; {!Get_Matching_Cases.CaseNumber}</expression>
+    </formulas>
+</Flow>
